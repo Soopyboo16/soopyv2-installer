@@ -47,6 +47,7 @@ public class InstallerFrame extends JFrame {
     private HashMap<String, String> ctFileToVersion = new HashMap<String, String>();
     private URL ctDownloadURL;
     private URL soopyv2DownloadURL;
+    private URL soopyv2ForgeDownloadURL;
 
     public InstallerFrame() {
         super("SoopyV2 Installer v" + version);
@@ -242,7 +243,7 @@ public class InstallerFrame extends JFrame {
         soopyV2InstallPanel.add(soopyV2InstallLabel, BorderLayout.WEST);
 
         if (!isSoopyV2Installed || !isSoopyV2Latest) {
-            JButton installSoopyV2Button = new JButton(isSoopyV2Latest ? "Install" : "Update");
+            JButton installSoopyV2Button = new JButton(isSoopyV2Latest ? "Update" : "Install");
 
             installSoopyV2Button.addActionListener(event -> {
                 new Thread(() -> {
@@ -362,6 +363,11 @@ public class InstallerFrame extends JFrame {
                 + "modules").exists())
             new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
                     + "modules").mkdirs();
+        if(!new File(minecraftFolder +File.separator + "mods" + File.separator + "soopyv2forge-1.1.jar").exists())
+            this.urlToFile(soopyv2ForgeDownloadURL,
+                minecraftFolder + File.separator + "mods" + File.separator + "soopyv2forge-1.1.jar",
+                10000,
+                10000);
 
         if (new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
                 + "modules" + File.separator + "SoopyV2").exists())
@@ -376,7 +382,7 @@ public class InstallerFrame extends JFrame {
                 10000);
 
         this.unzip(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
-                + "modules" + File.separator + "SoopyV2.zip",
+                        + "modules" + File.separator + "SoopyV2.zip",
                 minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
                         + "modules");
 
@@ -641,6 +647,7 @@ public class InstallerFrame extends JFrame {
 
             ctDownloadURL = new URL((String) jobj.get("ctDownloadURL"));
             soopyv2DownloadURL = new URL((String) jobj.get("soopyv2DownloadUrl"));
+            soopyv2ForgeDownloadURL = new URL((String) jobj.get("soopyv2forgeDownloadUrl"));
         } catch (IOException | ParseException e) {
             JOptionPane.showMessageDialog(this,
                     "Error loading download urls and latest version data",

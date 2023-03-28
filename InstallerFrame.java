@@ -363,11 +363,18 @@ public class InstallerFrame extends JFrame {
                 + "modules").exists())
             new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
                     + "modules").mkdirs();
-        if(!new File(minecraftFolder +File.separator + "mods" + File.separator + "soopyv2forge-1.1.jar").exists())
-            this.urlToFile(soopyv2ForgeDownloadURL,
-                minecraftFolder + File.separator + "mods" + File.separator + "soopyv2forge-1.1.jar",
-                10000,
-                10000);
+        if(!new File(minecraftFolder +File.separator + "mods" + File.separator + "soopyv2forge-1.1.jar").exists()) {
+            if (new File(minecraftFolder + File.separator + "mods" + File.separator + "1.8.9").exists())
+                this.urlToFile(soopyv2ForgeDownloadURL,
+                        minecraftFolder + File.separator + "mods" + File.separator + "1.8.9" + File.separator + "soopyv2forge-1.1.jar",
+                        10000,
+                        10000);
+            if (!new File(minecraftFolder + File.separator + "mods" + File.separator + "1.8.9").exists())
+                this.urlToFile(soopyv2ForgeDownloadURL,
+                        minecraftFolder + File.separator + "mods" + File.separator + "soopyv2forge-1.1.jar",
+                        10000,
+                        10000);
+        }
 
         if (new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
                 + "modules" + File.separator + "SoopyV2").exists())

@@ -35,7 +35,7 @@ public class InstallerFrame extends JFrame {
 
     public String minecraftFolder;
 
-    public static String version = "0.1.1";
+    public static String version = "1.0.2";
 
     private JPanel openPage;
 
@@ -234,7 +234,7 @@ public class InstallerFrame extends JFrame {
         panel.add(ctInstallPanel);
         // End of install Chattriggers
 
-        // Start of install SoopyV2
+        // Start of install SoopyV2 + SoopyV2Forge
         JPanel soopyV2InstallPanel = new JPanel();
 
         JLabel soopyV2InstallLabel = new JLabel(
@@ -266,7 +266,7 @@ public class InstallerFrame extends JFrame {
             soopyV2InstallPanel.add(deleteSoopyV2Button, BorderLayout.EAST);
         }
         panel.add(soopyV2InstallPanel);
-        // End of install SoopyV2
+        // End of install SoopyV2 + SoopyV2Forge
 
         if (!isChattriggersInstalled || !isSoopyV2Installed) {
             JButton installAllButton = new JButton("Install All");

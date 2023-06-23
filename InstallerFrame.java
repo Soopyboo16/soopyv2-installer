@@ -35,7 +35,7 @@ public class InstallerFrame extends JFrame {
 
     public String minecraftFolder;
 
-    public static String version = "1.0.2";
+    public static String version = "1.0.3";
 
     private JPanel openPage;
 
@@ -47,6 +47,7 @@ public class InstallerFrame extends JFrame {
     private HashMap<String, String> ctFileToVersion = new HashMap<String, String>();
     private URL ctDownloadURL;
     private URL soopyv2DownloadURL;
+    private URL soopyv2UnofficialDownloadURL;
     private URL soopyv2ForgeDownloadURL;
 
     public InstallerFrame() {
@@ -268,8 +269,45 @@ public class InstallerFrame extends JFrame {
         panel.add(soopyV2InstallPanel);
         // End of install SoopyV2 + SoopyV2Forge
 
+        // Begin Install Unofficial
+        JPanel soopyV2UnofficialInstallPanel = new JPanel();
+
+        JLabel soopyV2UnofficialInstallLabel = new JLabel(
+                isSoopyV2Installed ? "SoopyV2: Installed (v" + soopyV2Version + ")" : "SoopyV2: Not Installed");
+
+        soopyV2UnofficialInstallPanel.add(soopyV2UnofficialInstallLabel, BorderLayout.WEST);
+
+        if (!isSoopyV2Installed || !isSoopyV2Latest) {
+            JButton installSoopyV2UnofficialButton = new JButton(isSoopyV2Latest ? "Unofficial Release" : "Unofficial Release");
+
+            installSoopyV2UnofficialButton.addActionListener(event -> {
+                new Thread(() -> {
+                    if (!isSoopyV2Latest)
+                        this.uninstallSoopyV2();
+                    this.installSoopyV2Unofficial();
+                    this.openPage(mainInstallPanel());
+                }).start();
+            });
+
+            soopyV2UnofficialInstallPanel.add(installSoopyV2UnofficialButton, BorderLayout.EAST);
+        } else {
+            JButton deleteSoopyV2Button = new JButton("Delete");
+
+            deleteSoopyV2Button.addActionListener(event -> {
+                this.uninstallSoopyV2();
+                this.openPage(mainInstallPanel());
+            });
+
+            soopyV2UnofficialInstallPanel.add(deleteSoopyV2Button, BorderLayout.EAST);
+        }
+        panel.add(soopyV2UnofficialInstallPanel);
+
+        // End Install Unofficial
+
+        // install all
+
         if (!isChattriggersInstalled || !isSoopyV2Installed) {
-            JButton installAllButton = new JButton("Install All");
+            JButton installAllButton = new JButton("Install All (Official Release Only)");
 
             installAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -293,6 +331,44 @@ public class InstallerFrame extends JFrame {
         }
 
         return panel;
+    }
+
+    public void installSoopyV2Unofficial() {
+        JPanel loadingPage = new JPanel();
+
+        loadingPage.add(new JLabel("Installing SoopyV2..."));
+
+        JProgressBar progressBar = new JProgressBar();
+
+        progressBar.setIndeterminate(true);
+
+        loadingPage.add(progressBar);
+
+        this.openPage(loadingPage);
+
+        if (!new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                + "modules").exists())
+            new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                    + "modules").mkdirs();
+        if (new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                + "modules" + File.separator + "SoopyV2").exists())
+            this.deleteDirectory(new File(
+                    minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                            + "modules" + File.separator + "SoopyV2"));
+
+        this.urlToFile(soopyv2UnofficialDownloadURL,
+                minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                        + "modules" + File.separator + "SoopyV2.zip",
+                10000,
+                10000);
+
+        this.unzip(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                        + "modules" + File.separator + "SoopyV2.zip",
+                minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                        + "modules");
+
+        new File(minecraftFolder + File.separator + "config" + File.separator + "ChatTriggers" + File.separator
+                + "modules" + File.separator + "SoopyV2.zip").delete();
     }
 
     public void installChattriggers() {
@@ -655,6 +731,7 @@ public class InstallerFrame extends JFrame {
             ctDownloadURL = new URL((String) jobj.get("ctDownloadURL"));
             soopyv2DownloadURL = new URL((String) jobj.get("soopyv2DownloadUrl"));
             soopyv2ForgeDownloadURL = new URL((String) jobj.get("soopyv2forgeDownloadUrl"));
+            soopyv2UnofficialDownloadURL = new URL((String) jobj.get("soopyv2UnofficialDownloadURL"));
         } catch (IOException | ParseException e) {
             JOptionPane.showMessageDialog(this,
                     "Error loading download urls and latest version data",
